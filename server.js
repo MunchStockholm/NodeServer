@@ -61,3 +61,31 @@ app.get("/", async (req, res) => {
         res.status(500).send("Internal server error");
     }
 });
+
+app.get("/:id", async (req, res) => {
+    try {
+        const client = new MongoClient(connectionString);
+
+        async function getObjectById(client, dbName, collectionName, id) {
+            await client.connect();
+            const database = client.db(dbName);
+            const collection = database.collection(collectionName);
+            const object = await collection.findOne();
+            return object;
+        }
+
+        const objectId = req.params.id;
+        const object = await getObjectById(client, "GrafittiWallDB", "ArtWork", objectId);
+
+        await client.close();
+
+        if (object) {
+            res.json(object);
+        } else {
+            res.status(404).send("Object not found");
+        }
+    } catch (e) {
+        console.error(e);
+        res.status(500).send("Internal server error");
+    }
+});
