@@ -1,5 +1,6 @@
 import express, * as bodyParser from "express";
 import {MongoClient, ObjectId} from "mongodb";
+import router from "./router.js";
 
 const app = express();
 const server = app.listen(3001, () => {
@@ -10,6 +11,7 @@ const connectionString = "mongodb+srv://carolinevannebo:GacCfJNNIlhU8GYG@cluster
 const collection = "ArtWork";
 
 app.use(bodyParser.json());
+app.use('', router);
 //const { MongoClient } = require("mongodb");
 
 async function listObjectsInCollection(client, databaseName, collectionName) {
@@ -36,8 +38,7 @@ async function test() {
 
 test();
 
-
-app.get("/", async (req, res) => {
+/*app.get("/", async (req, res) => {
     try {
         const client = new MongoClient(connectionString);
 
@@ -84,4 +85,4 @@ app.get("/:id", async (req, res) => {
         console.error(e);
         res.status(500).send("Internal server error: " + e.message);
     }
-});
+});*/
