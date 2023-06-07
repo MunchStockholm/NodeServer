@@ -88,7 +88,7 @@ router.put("/:id", async (req, res) => {
         const result = await client
             .db("GrafittiWallDB")
             .collection(collection)
-            .findOneAndUpdate({ _id: id }, { $set: object }, { returnOriginal: false });
+            .findOneAndUpdate({ _id: id }, { $set: object });
 
         await client.close();
 
@@ -127,6 +127,5 @@ router.delete("/:id", async (req, res) => {
         res.status(500).send("Internal server error: " + e.message);
     }
 });
-
 
 export default router;
