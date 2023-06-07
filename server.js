@@ -64,7 +64,7 @@ app.get("/:id", async (req, res) => {
     try {
         const client = new MongoClient(connectionString);
         const collection = "ArtWork";
-        const id = parseInt(req.params.id); // Parse the id as an integer
+        const id = parseInt(req.params.id);
 
         await client.connect();
 
