@@ -10,33 +10,6 @@ const connectionString = "mongodb+srv://carolinevannebo:GacCfJNNIlhU8GYG@cluster
 const collection = "ArtWork";
 
 app.use(bodyParser.json());
-//const { MongoClient } = require("mongodb");
-
-async function listObjectsInCollection(client, databaseName, collectionName) {
-    const collection = client.db(databaseName).collection(collectionName);
-    const objects = await collection.find().toArray();
-
-    console.log(`Objects in ${databaseName}.${collectionName}:`);
-    objects.forEach(obj => console.log(obj));
-}
-
-async function test() {
-    const connectionString = "mongodb+srv://carolinevannebo:GacCfJNNIlhU8GYG@cluster.dfjytlp.mongodb.net/?retryWrites=true&w=majority";
-    const client = new MongoClient(connectionString);
-
-    try {
-        await client.connect();
-        await listObjectsInCollection(client, "GrafittiWallDB", "ArtWork");
-    } catch (e) {
-        console.error(e);
-    } finally {
-        await client.close();
-    }
-}
-
-test();
-
-
 app.get("/", async (req, res) => {
     try {
         const client = new MongoClient(connectionString);
