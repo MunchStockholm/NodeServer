@@ -77,6 +77,56 @@ router.post("/", async (req, res) => {
     }
 });
 
+router.put("/:id", async (req, res) => {
+    try {
+        const collection = "ArtWork";
+        const id = parseInt(req.params.id);
+        const object = req.body;
+
+        await client.connect();
+
+        const result = await client
+            .db("GrafittiWallDB")
+            .collection(collection)
+            .findOneAndUpdate({ _id: id }, { $set: object }, { returnOriginal: false });
+
+        await client.close();
+
+        if (!result.value) {
+            res.status(404).send("Document not found");
+        } else {
+            res.status(200).send(result.value);
+        }
+    } catch (e) {
+        console.error(e);
+        res.status(500).send("Internal server error: " + e.message);
+    }
+});
+
+router.delete("/:id", async (req, res) => {
+    try {
+        const collection = "ArtWork";
+        const id = parseInt(req.params.id);
+
+        await client.connect();
+
+        const result = await client
+            .db("GrafittiWallDB")
+            .collection(collection)
+            .findOneAndDelete({ _id: id });
+
+        await client.close();
+
+        if (!result.value) {
+            res.status(404).send("Document not found");
+        } else {
+            res.status(200).send(result.value);
+        }
+    } catch (e) {
+        console.error(e);
+        res.status(500).send("Internal server error: " + e.message);
+    }
+});
 
 
 export default router;
