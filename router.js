@@ -27,7 +27,13 @@ router.get("/", async (req, res) => {
         res.status(200).send(objects);
     } catch (e) {
         console.error(e);
-        res.status(500).send("Internal server error");
+        if (e instanceof MongoClientError) {
+            res.status(500).send({ message: 'Database Connection Error', error: e.message });
+        } else if (e instanceof MongoParseError) {
+            res.status(400).send({ message: 'Bad Request', error: e.message });
+        } else {
+            res.status(500).send({ message: 'Internal Server Error', error: e.message });
+        }
     }
 });
 
@@ -44,15 +50,17 @@ router.get("/:id", async (req, res) => {
             .findOne({ _id: id });
 
         await client.close();
-
-        if (result) {
-            res.status(200).send(result);
-        } else {
-            res.status(404).send("Object not found");
-        }
+        res.status(200).send(result);
+        
     } catch (e) {
         console.error(e);
-        res.status(500).send("Internal server error: " + e.message);
+        if (e instanceof MongoClientError) {
+            res.status(500).send({ message: 'Database Connection Error', error: e.message });
+        } else if (e instanceof MongoParseError) {
+            res.status(400).send({ message: 'Bad Request', error: e.message });
+        } else {
+            res.status(500).send({ message: 'Internal Server Error', error: e.message });
+        }
     }
 });
 
@@ -73,7 +81,13 @@ router.post("/", async (req, res) => {
         res.status(200).send(result);
     } catch (e) {
         console.error(e);
-        res.status(500).send("Internal server error: " + e.message);
+        if (e instanceof MongoClientError) {
+            res.status(500).send({ message: 'Database Connection Error', error: e.message });
+        } else if (e instanceof MongoParseError) {
+            res.status(400).send({ message: 'Bad Request', error: e.message });
+        } else {
+            res.status(500).send({ message: 'Internal Server Error', error: e.message });
+        }
     }
 });
 
@@ -91,15 +105,17 @@ router.put("/:id", async (req, res) => {
             .findOneAndUpdate({ _id: id }, { $set: object });
 
         await client.close();
-
-        if (!result.value) {
-            res.status(404).send("Document not found");
-        } else {
-            res.status(200).send(result.value);
-        }
+        res.status(200).send(result.value);
+        
     } catch (e) {
         console.error(e);
-        res.status(500).send("Internal server error: " + e.message);
+        if (e instanceof MongoClientError) {
+            res.status(500).send({ message: 'Database Connection Error', error: e.message });
+        } else if (e instanceof MongoParseError) {
+            res.status(400).send({ message: 'Bad Request', error: e.message });
+        } else {
+            res.status(500).send({ message: 'Internal Server Error', error: e.message });
+        }
     }
 });
 
@@ -117,14 +133,17 @@ router.delete("/:id", async (req, res) => {
 
         await client.close();
 
-        if (!result.value) {
-            res.status(404).send("Document not found");
-        } else {
-            res.status(200).send(result.value);
-        }
+        res.status(200).send(result.value);
+        
     } catch (e) {
         console.error(e);
-        res.status(500).send("Internal server error: " + e.message);
+        if (e instanceof MongoClientError) {
+            res.status(500).send({ message: 'Database Connection Error', error: e.message });
+        } else if (e instanceof MongoParseError) {
+            res.status(400).send({ message: 'Bad Request', error: e.message });
+        } else {
+            res.status(500).send({ message: 'Internal Server Error', error: e.message });
+        }
     }
 });
 
