@@ -1,6 +1,12 @@
 import { MongoClient } from "mongodb";
+import dotenv from 'dotenv';
 
-const connectionString = "mongodb+srv://carolinevannebo:GacCfJNNIlhU8GYG@cluster.dfjytlp.mongodb.net/?retryWrites=true&w=majority";
+dotenv.config();
+
+const user = process.env.MONGO_USER;
+const password = process.env.MONGO_PASSWORD;
+
+const connectionString = `mongodb+srv://${user}:${password}@cluster.dfjytlp.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(connectionString);
 
 export default client;
