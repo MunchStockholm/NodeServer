@@ -14,7 +14,6 @@ To run this project, you will need:
 Clone the repository and install dependencies:
 ```
 git clone https://github.com/MunchStockholm/NodeServer
-cd grafittiwall-api
 npm install
 ```
 
