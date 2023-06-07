@@ -1,7 +1,5 @@
-import express from "express";
-import {MongoClient, ServerApiVersion} from "mongodb";
-import path from "path";
-import * as bodyParser from "express";
+import express, * as bodyParser from "express";
+import {MongoClient, ObjectId} from "mongodb";
 
 const app = express();
 const server = app.listen(3001, () => {
@@ -65,27 +63,25 @@ app.get("/", async (req, res) => {
 app.get("/:id", async (req, res) => {
     try {
         const client = new MongoClient(connectionString);
+        const collection = "ArtWork";
+        const id = parseInt(req.params.id); // Parse the id as an integer
 
-        async function getObjectById(client, dbName, collectionName, id) {
-            await client.connect();
-            const database = client.db(dbName);
-            const collection = database.collection(collectionName);
-            const object = await collection.findOne();
-            return object;
-        }
+        await client.connect();
 
-        const objectId = req.params.id;
-        const object = await getObjectById(client, "GrafittiWallDB", "ArtWork", objectId);
+        const result = await client
+            .db("GrafittiWallDB")
+            .collection(collection)
+            .findOne({ _id: id });
 
         await client.close();
 
-        if (object) {
-            res.json(object);
+        if (result) {
+            res.send(result);
         } else {
             res.status(404).send("Object not found");
         }
     } catch (e) {
         console.error(e);
-        res.status(500).send("Internal server error");
+        res.status(500).send("Internal server error: " + e.message);
     }
 });
