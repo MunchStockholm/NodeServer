@@ -24,7 +24,7 @@ router.get("/", async (req, res) => {
 
         await client.close();
 
-        res.send(objects);
+        res.status(200).send(objects);
     } catch (e) {
         console.error(e);
         res.status(500).send("Internal server error");
@@ -46,7 +46,7 @@ router.get("/:id", async (req, res) => {
         await client.close();
 
         if (result) {
-            res.send(result);
+            res.status(200).send(result);
         } else {
             res.status(404).send("Object not found");
         }
@@ -56,66 +56,27 @@ router.get("/:id", async (req, res) => {
     }
 });
 
-/*router.get('/', async (req, res) => {
+router.post("/", async (req, res) => {
     try {
-        const artworks = await ArtworkModel.find({});
-        if (artworks.length !== 0) {
-            res.json(artworks);
-        } else {
-            res.status(404).send('No artworks found');
-        }
-    } catch (err) {
-        res.status(500).send('Internal server error');
+        const collection = "ArtWork";
+        const object = req.body;
+
+        await client.connect();
+
+        const result = await client
+            .db("GrafittiWallDB")
+            .collection(collection)
+            .insertOne(object);
+
+        await client.close();
+
+        res.status(200).send(result);
+    } catch (e) {
+        console.error(e);
+        res.status(500).send("Internal server error: " + e.message);
     }
 });
 
-router.get('/:id', async (req, res) => {
-    try {
-        const artwork = await ArtworkModel.findOne({ id: req.params.id });
-        if (artwork) {
-            res.json(artwork);
-        } else {
-            res.status(404).send('Artwork not found');
-        }
-    } catch (err) {
-        res.status(500).send('Internal server error');
-    }
-});
 
-router.post('/', async (req, res) => {
-    try {
-        const newArtWork = new ArtWork(req.body);
-        await newArtWork.save();
-        res.status(201).json(newArtWork);
-    } catch (err) {
-        res.status(500).send('Internal server error');
-    }
-});
-
-router.put('/:id', async (req, res) => {
-    try {
-        const updatedArtWork = await ArtworkModel.findOneAndUpdate({ id: req.params.id }, req.body, { new: true });
-        if (updatedArtWork) {
-            res.status(204).json(updatedArtWork);
-        } else {
-            res.status(404).send('Artwork not found');
-        }
-    } catch (err) {
-        res.status(500).send('Internal server error');
-    }
-});
-
-router.delete('/:id', async (req, res) => {
-    try {
-        const removedArtWork = await ArtworkModel.findOneAndRemove({ id: req.params.id });
-        if (removedArtWork) {
-            res.json(removedArtWork);
-        } else {
-            res.status(404).send('Artwork not found');
-        }
-    } catch (err) {
-        res.status(500).send('Internal server error');
-    }
-});*/
 
 export default router;
