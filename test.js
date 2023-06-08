@@ -3,7 +3,10 @@ import { expect } from "chai";
 import supertest from "supertest";
 import { app } from "./server.js";
 
-const connectionString = "mongodb+srv://carolinevannebo:GacCfJNNIlhU8GYG@cluster.dfjytlp.mongodb.net/?retryWrites=true&w=majority";
+const user = process.env.MONGO_USER;
+const password = process.env.MONGO_PASSWORD;
+
+const connectionString = `mongodb+srv://${user}:${password}@cluster.dfjytlp.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(connectionString);
 
 describe("GET /", () => {
@@ -41,7 +44,7 @@ describe("POST /", () => {
         it("should respond with a 200 status code", async () => {
             await request
                 .post("/")
-                .send({_id: 100,
+                .send({_id: 101,
                     ImageBytes: "updatedbase64string",
                     ImageUrl: "url",
                     IsFeatured: true,
@@ -50,3 +53,17 @@ describe("POST /", () => {
         });
     });
 });
+
+describe("DELETE /:id", () => {
+    let request = supertest(app);
+
+    describe("when deleting an object", () => {
+        it("should respond with a 200 status code", async () => {
+            // Assuming there is an object with ID 100 in the database before deletion
+
+            await request
+                .delete("/101")
+                .expect(200);
+        });
+    });
+})
