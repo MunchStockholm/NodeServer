@@ -1,41 +1,26 @@
-import express from 'express';
-import morgan from 'morgan';
-import bodyParser from 'body-parser';
-import client from './client.js';
-import csrf from 'csrf';
-import cookieParser from 'cookie-parser';
+import express, * as bodyParser from "express";
+import router from "./router.js";
+import cors from "cors";
 
-const csrfProtection = csrf({ cookie: true });
-const router = express.Router();
+const express = require('express');
+const csrf = require('csurf');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 
-// Enable parsing of JSON bodies
-router.use(bodyParser.json());
-
-// Enable parsing of URL-encoded bodies
-router.use(bodyParser.urlencoded({ extended: true }));
-
-// Enable parsing of cookies
-router.use(cookieParser());
-
-// Log requests
-router.use(morgan('tiny'));
-
-// Apply CSRF protection middleware
-router.use(csrfProtection);
-
-// Add CSRF token to every response
-router.use((req, res, next) => {
-  res.cookie('XSRF-TOKEN', req.csrfToken());
-  next();
+const app = express();
+const server = app.listen(3001, () => {
+    console.log(`Started on http://localhost:${server.address().port}`);
 });
 
-// Handle CSRF token validation failure
-router.use((err, req, res, next) => {
-  if (err.code === 'EBADCSRFTOKEN') {
-    res.status(403).json({ message: 'Invalid CSRF token' });
-  } else {
-    next(err);
-  }
+// Add CSRF protection middleware
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(csrf({ cookie: true }));
+
+// Generate CSRF token and include it in every response
+app.use((req, res, next) => {
+    res.cookie('XSRF-TOKEN', req.csrfToken());
+    next();
 });
 
-export default router;
+app.use('', router);
