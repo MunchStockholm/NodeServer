@@ -78,7 +78,7 @@ router.post("/", async (req, res) => {
 
         await client.close();
 
-        res.status(200).json(sanitizeResult(result)); 
+        res.status(200).send(result); 
 
     } catch (e) {
         console.error(e);
@@ -91,23 +91,6 @@ router.post("/", async (req, res) => {
         }
     }
 });
-
-function sanitizeResult(result) {
-    const sanitizedResult = {
-        insertedId: sanitizeField(result.insertedId),
-        acknowledged: sanitizeField(result.acknowledged),
-
-    };
-
-    return sanitizedResult;
-}
-
-function sanitizeField(value) {
-
-    const DOMPurify = require('dompurify');
-    return DOMPurify.sanitize(value);
-}
-
 
 router.put("/:id", async (req, res) => {
     try {
@@ -123,7 +106,7 @@ router.put("/:id", async (req, res) => {
             .findOneAndUpdate({ _id: id }, { $set: object });
 
         await client.close();
-        res.status(200).json(result.value); // Use .json() instead of .send()
+        res.status(200).send(result); // Use .json() instead of .send()
 
     } catch (e) {
         console.error(e);
@@ -152,7 +135,7 @@ router.delete("/:id", async (req, res) => {
 
         await client.close();
 
-        res.status(200).json(result.value); // Use .json() instead of .send()
+        res.status(200).send(result); // Use .json() instead of .send()
 
     } catch (e) {
         console.error(e);
