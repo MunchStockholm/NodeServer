@@ -38,7 +38,4 @@ router.use((err, req, res, next) => {
   }
 });
 
-// RESTful API endpoints
-// ...
-
 export default router;
