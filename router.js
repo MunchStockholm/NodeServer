@@ -40,7 +40,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
     try {
         const collection = "ArtWork";
-        const id = parseInt(req.params.id);
+        const id = req.params.id;
 
         await client.connect();
 
@@ -94,7 +94,7 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
     try {
         const collection = "ArtWork";
-        const id = parseInt(req.params.id);
+        const id = req.params.id;
         const object = req.body;
 
         await client.connect();
@@ -122,7 +122,7 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
     try {
         const collection = "ArtWork";
-        const id = parseInt(req.params.id);
+        const id = req.params.id;
 
         await client.connect();
 
