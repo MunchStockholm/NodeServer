@@ -1,26 +1,34 @@
-import express, * as bodyParser from "express";
+import express from "express";
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
+import csurf from "csurf";
 import router from "./router.js";
 import cors from "cors";
 
-const express = require('express');
-const csrf = require('csurf');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
-
 const app = express();
-const server = app.listen(3001, () => {
-    console.log(`Started on http://localhost:${server.address().port}`);
-});
+const port = 3001;
+
+// Enable CORS
+app.use(cors());
+
+// Enable parsing of JSON bodies
+app.use(bodyParser.json());
+
+// Enable parsing of cookies
+app.use(cookieParser());
 
 // Add CSRF protection middleware
-app.use(cookieParser());
-app.use(bodyParser.json());
-app.use(csrf({ cookie: true }));
+app.use(csurf({ cookie: true }));
 
 // Generate CSRF token and include it in every response
 app.use((req, res, next) => {
-    res.cookie('XSRF-TOKEN', req.csrfToken());
+    res.cookie("XSRF-TOKEN", req.csrfToken());
     next();
 });
 
-app.use('', router);
+app.use("", router);
+
+// Start the server
+const server = app.listen(port, () => {
+    console.log(`Started on http://localhost:${port}`);
+});
