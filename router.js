@@ -10,26 +10,26 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(morgan('tiny'));
 
-router.post("/", csrfProtection, async (req, res) => {
+router.get("/", csrfProtection, async (req, res) => {
     const csrfToken = req.cookies["XSRF-TOKEN"];
     if (!csrfToken || req.body._csrf !== csrfToken) {
       return res.status(403).json({ message: "Invalid CSRF token" });
     }
   
     try {
-      const collection = "ArtWork";
-      const object = req.body;
+      async function listObjects(client, dbName, collectionName) {
+        await client.connect();
+        const database = client.db(dbName);
+        const collection = database.collection(collectionName);
+        const objects = await collection.find({}).toArray();
+        return objects;
+      }
   
-      await client.connect();
-  
-      const result = await client
-        .db("GrafittiWallDB")
-        .collection(collection)
-        .insertOne(object);
+      const objects = await listObjects(client, "GrafittiWallDB", "ArtWork");
   
       await client.close();
   
-      res.status(200).json(sanitizeResult(result));
+      res.status(200).send(objects);
     } catch (e) {
       console.error(e);
       if (e instanceof MongoClientError) {
@@ -43,7 +43,7 @@ router.post("/", csrfProtection, async (req, res) => {
   });
   
 
-  router.get("/:id", csrfProtection, async (req, res) => {
+router.get("/:id", csrfProtection, async (req, res) => {
     const csrfToken = req.cookies["XSRF-TOKEN"];
     if (!csrfToken || req.query._csrf !== csrfToken) {
       return res.status(403).json({ message: "Invalid CSRF token" });
@@ -75,7 +75,7 @@ router.post("/", csrfProtection, async (req, res) => {
   });
   
 
-  router.post("/", csrfProtection, async (req, res) => {
+router.post("/", csrfProtection, async (req, res) => {
     const csrfToken = req.cookies["XSRF-TOKEN"];
     if (!csrfToken || req.body._csrf !== csrfToken) {
       return res.status(403).json({ message: "Invalid CSRF token" });
@@ -106,15 +106,6 @@ router.post("/", csrfProtection, async (req, res) => {
       }
     }
   });
-  
-  function sanitizeResult(result) {
-    const sanitizedResult = {
-      insertedId: sanitizeField(result.insertedId),
-      acknowledged: sanitizeField(result.acknowledged),
-    };
-  
-    return sanitizedResult;
-  }
   
 
 function sanitizeResult(result) {
@@ -198,6 +189,4 @@ router.put("/:id", csrfProtection, async (req, res) => {
     }
   });
   
-
-
 export default router;
