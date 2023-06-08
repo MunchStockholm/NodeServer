@@ -123,8 +123,8 @@ router.put("/:id", async (req, res) => {
             .findOneAndUpdate({ _id: id }, { $set: object });
 
         await client.close();
-        res.status(200).send(result.value);
-        
+        res.status(200).json(result.value); // Use .json() instead of .send()
+
     } catch (e) {
         console.error(e);
         if (e instanceof MongoClientError) {
@@ -136,6 +136,7 @@ router.put("/:id", async (req, res) => {
         }
     }
 });
+
 
 router.delete("/:id", async (req, res) => {
     try {
@@ -151,8 +152,8 @@ router.delete("/:id", async (req, res) => {
 
         await client.close();
 
-        res.status(200).send(result.value);
-        
+        res.status(200).json(result.value); // Use .json() instead of .send()
+
     } catch (e) {
         console.error(e);
         if (e instanceof MongoClientError) {
@@ -164,5 +165,6 @@ router.delete("/:id", async (req, res) => {
         }
     }
 });
+
 
 export default router;
