@@ -40,7 +40,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
     try {
         const collection = "ArtWork";
-        const id = parseInt(req.params.id);
+        const id = req.params.id;
 
         await client.connect();
 
@@ -78,8 +78,7 @@ router.post("/", async (req, res) => {
 
         await client.close();
 
-        res.status(200).send(result); 
-
+        res.status(200).send(result);
     } catch (e) {
         console.error(e);
         if (e instanceof MongoClientError) {
@@ -95,7 +94,7 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
     try {
         const collection = "ArtWork";
-        const id = parseInt(req.params.id);
+        const id = req.params.id;
         const object = req.body;
 
         await client.connect();
@@ -106,8 +105,8 @@ router.put("/:id", async (req, res) => {
             .findOneAndUpdate({ _id: id }, { $set: object });
 
         await client.close();
-        res.status(200).send(result); // Use .json() instead of .send()
-
+        res.status(200).send(result.value);
+        
     } catch (e) {
         console.error(e);
         if (e instanceof MongoClientError) {
@@ -120,11 +119,10 @@ router.put("/:id", async (req, res) => {
     }
 });
 
-
 router.delete("/:id", async (req, res) => {
     try {
         const collection = "ArtWork";
-        const id = parseInt(req.params.id);
+        const id = req.params.id;
 
         await client.connect();
 
@@ -135,8 +133,8 @@ router.delete("/:id", async (req, res) => {
 
         await client.close();
 
-        res.status(200).send(result); // Use .json() instead of .send()
-
+        res.status(200).send(result.value);
+        
     } catch (e) {
         console.error(e);
         if (e instanceof MongoClientError) {
@@ -148,6 +146,5 @@ router.delete("/:id", async (req, res) => {
         }
     }
 });
-
 
 export default router;
