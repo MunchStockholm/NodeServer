@@ -26,7 +26,17 @@ app.use((req, res, next) => {
     next();
 });
 
+// Routes should be defined after CSRF middleware
 app.use("", router);
+
+// Error handling for CSRF token validation failure
+app.use((err, req, res, next) => {
+    if (err.code === "EBADCSRFTOKEN") {
+        res.status(403).json({ message: "Invalid CSRF token" });
+    } else {
+        next(err);
+    }
+});
 
 // Start the server
 const server = app.listen(port, () => {
