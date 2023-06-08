@@ -78,7 +78,8 @@ router.post("/", async (req, res) => {
 
         await client.close();
 
-        res.status(200).send(result);
+        res.status(200).json(sanitizeResult(result)); 
+
     } catch (e) {
         console.error(e);
         if (e instanceof MongoClientError) {
@@ -90,6 +91,23 @@ router.post("/", async (req, res) => {
         }
     }
 });
+
+function sanitizeResult(result) {
+    const sanitizedResult = {
+        insertedId: sanitizeField(result.insertedId),
+        acknowledged: sanitizeField(result.acknowledged),
+
+    };
+
+    return sanitizedResult;
+}
+
+function sanitizeField(value) {
+
+    const DOMPurify = require('dompurify');
+    return DOMPurify.sanitize(value);
+}
+
 
 router.put("/:id", async (req, res) => {
     try {
