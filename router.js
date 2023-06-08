@@ -27,9 +27,9 @@ router.get("/", async (req, res) => {
     res.status(200).send(objects);
   } catch (e) {
     console.error(e);
-    if (e instanceof MongoClientError) {
+    if (typeof e === 'MongoClientError') {
       res.status(500).send({ message: "Database Connection Error", error: e.message });
-    } else if (e instanceof MongoParseError) {
+    } else if (typeof e === 'MongoParseError') {
       res.status(400).send({ message: "Bad Request", error: e.message });
     } else {
       res.status(500).send({ message: "Internal Server Error", error: e.message });
@@ -53,9 +53,9 @@ router.get("/:id", async (req, res) => {
     res.status(200).send(result);
   } catch (e) {
     console.error(e);
-    if (e instanceof MongoClientError) {
-      res.status(500).send({ message: "Database Connection Error", error: e.message });
-    } else if (e instanceof MongoParseError) {
+    if (typeof e === 'MongoClientError') {
+        res.status(500).send({ message: "Database Connection Error", error: e.message });
+      } else if (typeof e === 'MongoParseError'){
       res.status(400).send({ message: "Bad Request", error: e.message });
     } else {
       res.status(500).send({ message: "Internal Server Error", error: e.message });
@@ -80,9 +80,9 @@ router.post("/", async (req, res) => {
     res.status(200).json(sanitizeResult(result));
   } catch (e) {
     console.error(e);
-    if (e instanceof MongoClientError) {
-      res.status(500).send({ message: "Database Connection Error", error: e.message });
-    } else if (e instanceof MongoParseError) {
+    if (typeof e === 'MongoClientError') {
+        res.status(500).send({ message: "Database Connection Error", error: e.message });
+      } else if (typeof e === 'MongoParseError') {
       res.status(400).send({ message: "Bad Request", error: e.message });
     } else {
       res.status(500).send({ message: "Internal Server Error", error: e.message });
@@ -121,9 +121,9 @@ router.put("/:id", async (req, res) => {
     res.status(200).json(result.value);
   } catch (e) {
     console.error(e);
-    if (e instanceof MongoClientError) {
-      res.status(500).send({ message: "Database Connection Error", error: e.message });
-    } else if (e instanceof MongoParseError) {
+    if (typeof e === 'MongoClientError') {
+        res.status(500).send({ message: "Database Connection Error", error: e.message });
+      } else if (typeof e === 'MongoParseError') {
       res.status(400).send({ message: "Bad Request", error: e.message });
     } else {
       res.status(500).send({ message: "Internal Server Error", error: e.message });
@@ -148,9 +148,9 @@ router.delete("/:id", async (req, res) => {
     res.status(200).json(result.value);
   } catch (e) {
     console.error(e);
-    if (e instanceof MongoClientError) {
-      res.status(500).send({ message: "Database Connection Error", error: e.message });
-    } else if (e instanceof MongoParseError) {
+    if (typeof e === 'MongoClientError') {
+        res.status(500).send({ message: "Database Connection Error", error: e.message });
+      } else if (typeof e === 'MongoParseError') {
       res.status(400).send({ message: "Bad Request", error: e.message });
     } else {
       res.status(500).send({ message: "Internal Server Error", error: e.message });
