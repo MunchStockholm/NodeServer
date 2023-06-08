@@ -23,8 +23,8 @@ The API uses environment variables to configure the MongoDB connection string.
 
 Create a .env file in the root directory of your project. Add environment-specific variables on new lines in the form of NAME=VALUE. For example:
 ```
-MONGO_USER="my_mongodb_user"
-MONGO_PASSWORD="my_mongodb_password"
+MONGO_USER=my_mongodb_user
+MONGO_PASSWORD=my_mongodb_password
 ```
 
 Replace my_mongodb_user and my_mongodb_password with your actual MongoDB username and password.
