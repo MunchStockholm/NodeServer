@@ -4,7 +4,6 @@ import cookieParser from "cookie-parser";
 import csurf from "csurf";
 import router from "./router.js";
 import cors from "cors";
-import axios from "axios";
 
 const app = express();
 const port = 3001;
@@ -19,13 +18,12 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 // Add CSRF protection middleware
-const csrfProtection = csurf({ cookie: true });
-app.use(csrfProtection);
+app.use(csurf({ cookie: true }));
 
 // Generate CSRF token and include it in every response
 app.use((req, res, next) => {
-  res.cookie("XSRF-TOKEN", req.csrfToken());
-  next();
+    res.cookie("XSRF-TOKEN", req.csrfToken());
+    next();
 });
 
 // Routes should be defined after CSRF middleware
@@ -33,39 +31,14 @@ app.use("", router);
 
 // Error handling for CSRF token validation failure
 app.use((err, req, res, next) => {
-  if (err.code === "EBADCSRFTOKEN") {
-    res.status(403).json({ message: "Invalid CSRF token" });
-  } else {
-    next(err);
-  }
-});
-
-// Make sure to include the CSRF token in every request that requires it
-app.post("*", (req, res, next) => {
-  const csrfToken = req.cookies["XSRF-TOKEN"];
-  if (!csrfToken || req.body._csrf !== csrfToken) {
-    return res.status(403).json({ message: "Invalid CSRF token" });
-  }
-  next();
-});
-
-app.delete("*", (req, res, next) => {
-  const csrfToken = req.cookies["XSRF-TOKEN"];
-  if (!csrfToken || req.body._csrf !== csrfToken) {
-    return res.status(403).json({ message: "Invalid CSRF token" });
-  }
-  next();
-});
-
-app.put("*", (req, res, next) => {
-  const csrfToken = req.cookies["XSRF-TOKEN"];
-  if (!csrfToken || req.body._csrf !== csrfToken) {
-    return res.status(403).json({ message: "Invalid CSRF token" });
-  }
-  next();
+    if (err.code === "EBADCSRFTOKEN") {
+        res.status(403).json({ message: "Invalid CSRF token" });
+    } else {
+        next(err);
+    }
 });
 
 // Start the server
 const server = app.listen(port, () => {
-  console.log(`Started on http://localhost:${port}`);
+    console.log(`Started on http://localhost:${port}`);
 });
