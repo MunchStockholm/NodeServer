@@ -5,7 +5,6 @@ import client from './client.js';
 import csrf from 'csrf';
 
 
-const csrfProtection = csrf({ cookie: true })
 const router = express.Router();
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
@@ -13,7 +12,7 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(morgan('tiny'));
 
-router.get("/", csrfProtection, async (req, res) => {
+router.get("/", async (req, res) => {
     const csrfToken = req.cookies["XSRF-TOKEN"];
     if (!csrfToken || req.body._csrf !== csrfToken) {
       return res.status(403).json({ message: "Invalid CSRF token" });
@@ -46,7 +45,7 @@ router.get("/", csrfProtection, async (req, res) => {
   });
   
 
-router.get("/:id", csrfProtection, async (req, res) => {
+router.get("/:id", async (req, res) => {
     const csrfToken = req.cookies["XSRF-TOKEN"];
     if (!csrfToken || req.query._csrf !== csrfToken) {
       return res.status(403).json({ message: "Invalid CSRF token" });
@@ -78,7 +77,7 @@ router.get("/:id", csrfProtection, async (req, res) => {
   });
   
 
-router.post("/", csrfProtection, async (req, res) => {
+router.post("/", async (req, res) => {
     const csrfToken = req.cookies["XSRF-TOKEN"];
     if (!csrfToken || req.body._csrf !== csrfToken) {
       return res.status(403).json({ message: "Invalid CSRF token" });
@@ -128,7 +127,7 @@ function sanitizeField(value) {
 }
 
 
-router.put("/:id", csrfProtection, async (req, res) => {
+router.put("/:id", async (req, res) => {
     const csrfToken = req.cookies["XSRF-TOKEN"];
     if (!csrfToken || req.body._csrf !== csrfToken) {
       return res.status(403).json({ message: "Invalid CSRF token" });
@@ -160,7 +159,7 @@ router.put("/:id", csrfProtection, async (req, res) => {
     }
   });
   
-  router.delete("/:id", csrfProtection, async (req, res) => {
+  router.delete("/:id", async (req, res) => {
     const csrfToken = req.cookies["XSRF-TOKEN"];
     if (!csrfToken || req.body._csrf !== csrfToken) {
       return res.status(403).json({ message: "Invalid CSRF token" });
