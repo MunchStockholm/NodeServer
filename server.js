@@ -41,7 +41,11 @@ app.use((err, req, res, next) => {
 });
 
 // Make sure to include the CSRF token in Axios requests
-axios.defaults.headers.common["X-XSRF-TOKEN"] = req.cookies["XSRF-TOKEN"];
+axios.interceptors.request.use((config) => {
+  const csrfToken = req.cookies["XSRF-TOKEN"];
+  config.headers["X-XSRF-TOKEN"] = csrfToken;
+  return config;
+});
 
 // Start the server
 const server = app.listen(port, () => {
