@@ -40,11 +40,29 @@ app.use((err, req, res, next) => {
   }
 });
 
-// Make sure to include the CSRF token in Axios requests
-axios.interceptors.request.use((config) => {
+// Make sure to include the CSRF token in every request that requires it
+app.post("*", (req, res, next) => {
   const csrfToken = req.cookies["XSRF-TOKEN"];
-  config.headers["X-XSRF-TOKEN"] = csrfToken;
-  return config;
+  if (!csrfToken || req.body._csrf !== csrfToken) {
+    return res.status(403).json({ message: "Invalid CSRF token" });
+  }
+  next();
+});
+
+app.delete("*", (req, res, next) => {
+  const csrfToken = req.cookies["XSRF-TOKEN"];
+  if (!csrfToken || req.body._csrf !== csrfToken) {
+    return res.status(403).json({ message: "Invalid CSRF token" });
+  }
+  next();
+});
+
+app.put("*", (req, res, next) => {
+  const csrfToken = req.cookies["XSRF-TOKEN"];
+  if (!csrfToken || req.body._csrf !== csrfToken) {
+    return res.status(403).json({ message: "Invalid CSRF token" });
+  }
+  next();
 });
 
 // Start the server
