@@ -1,44 +1,44 @@
-import express from "express";
-import bodyParser from "body-parser";
-import cookieParser from "cookie-parser";
-import csurf from "csurf";
-import router from "./router.js";
-import cors from "cors";
+import express from 'express';
+import morgan from 'morgan';
+import bodyParser from 'body-parser';
+import client from './client.js';
+import csrf from 'csrf';
+import cookieParser from 'cookie-parser';
 
-const app = express();
-const port = 3001;
-
-// Enable CORS
-app.use(cors());
+const csrfProtection = csrf({ cookie: true });
+const router = express.Router();
 
 // Enable parsing of JSON bodies
-app.use(bodyParser.json());
+router.use(bodyParser.json());
+
+// Enable parsing of URL-encoded bodies
+router.use(bodyParser.urlencoded({ extended: true }));
 
 // Enable parsing of cookies
-app.use(cookieParser());
+router.use(cookieParser());
 
-// Add CSRF protection middleware
-app.use(csurf({ cookie: true }));
+// Log requests
+router.use(morgan('tiny'));
 
-// Generate CSRF token and include it in every response
-app.use((req, res, next) => {
-    res.cookie("XSRF-TOKEN", req.csrfToken());
-    next();
+// Apply CSRF protection middleware
+router.use(csrfProtection);
+
+// Add CSRF token to every response
+router.use((req, res, next) => {
+  res.cookie('XSRF-TOKEN', req.csrfToken());
+  next();
 });
 
-// Routes should be defined after CSRF middleware
-app.use("", router);
-
-// Error handling for CSRF token validation failure
-app.use((err, req, res, next) => {
-    if (err.code === "EBADCSRFTOKEN") {
-        res.status(403).json({ message: "Invalid CSRF token" });
-    } else {
-        next(err);
-    }
+// Handle CSRF token validation failure
+router.use((err, req, res, next) => {
+  if (err.code === 'EBADCSRFTOKEN') {
+    res.status(403).json({ message: 'Invalid CSRF token' });
+  } else {
+    next(err);
+  }
 });
 
-// Start the server
-const server = app.listen(port, () => {
-    console.log(`Started on http://localhost:${port}`);
-});
+// RESTful API endpoints
+// ...
+
+export default router;

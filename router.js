@@ -2,7 +2,10 @@ import express from 'express';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import client from './client.js';
+import csrf from 'csrf';
 
+
+const csrfProtection = csrf({ cookie: true })
 const router = express.Router();
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
