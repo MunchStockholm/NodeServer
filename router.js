@@ -41,14 +41,20 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
     try {
         const collection = "ArtWork";
-        const id = new ObjectId(req.params.id);
+        const id = req.params.id;
+
+        if (!ObjectId.isValid(id)) {
+          return res.status(400).send({ message: 'Invalid id format.' });
+        }
+
+        const o_id = new ObjectId(id);
 
         await client.connect();
 
         const result = await client
             .db("GrafittiWallDB")
             .collection(collection)
-            .findOne({ _id: id });
+            .findOne({ _id: o_id });
 
         await client.close();
         if(result) {
@@ -101,15 +107,21 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
     try {
         const collection = "ArtWork";
-        const id = new ObjectId(req.params.id);
         const object = req.body;
+        const id = req.params.id;
+
+        if (!ObjectId.isValid(id)) {
+          return res.status(400).send({ message: 'Invalid id format.' });
+        }
+
+        const o_id = new ObjectId(id);
 
         await client.connect();
 
         const result = await client
             .db("GrafittiWallDB")
             .collection(collection)
-            .findOneAndUpdate({ _id: id }, { $set: object });
+            .findOneAndUpdate({ _id: o_id }, { $set: object });
 
         await client.close();
         if(result) {
@@ -133,14 +145,20 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
     try {
         const collection = "ArtWork";
-        const id = new ObjectId(req.params.id);
+        const id = req.params.id;
+
+        if (!ObjectId.isValid(id)) {
+          return res.status(400).send({ message: 'Invalid id format.' });
+        }
+
+        const o_id = new ObjectId(id);
 
         await client.connect();
 
         const result = await client
             .db("GrafittiWallDB")
             .collection(collection)
-            .findOneAndDelete({ _id: id });
+            .findOneAndDelete({ _id: o_id });
 
         await client.close();
 
