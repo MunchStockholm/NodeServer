@@ -84,7 +84,7 @@ router.post("/", async (req, res) => {
     const collection = "ArtWork";
     const object = req.body;
 
-    object.CreateDate = new Date();
+    object.CreatedDate = new Date();
 
     await client.connect();
 
