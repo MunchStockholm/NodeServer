@@ -15,6 +15,9 @@
   "devDependencies": {
     "nodemon": "^2.0.20"
   },
+  "engines": {
+    "node": ">=15.0.0"
+  },
   "dependencies": {
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
