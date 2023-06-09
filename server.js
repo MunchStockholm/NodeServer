@@ -13,6 +13,6 @@ app.use('', router);
 
 const PORT = process.env.PORT || 3001; // Use the PORT environment variable if available
 
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 });
