@@ -2,6 +2,7 @@ import express from 'express';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import client from './client.js';
+import { ObjectId } from 'mongodb';
 
 const router = express.Router();
 router.use(express.json());
@@ -40,7 +41,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
     try {
         const collection = "ArtWork";
-        const id = parseInt(req.params.id);
+        const id = new ObjectId(req.params.id);
 
         await client.connect();
 
@@ -50,7 +51,11 @@ router.get("/:id", async (req, res) => {
             .findOne({ _id: id });
 
         await client.close();
-        res.status(200).send(result);
+        if(result) {
+          res.status(200).json(result);
+        } else {
+            res.status(404).send({ message: 'No document found with the given id.' });
+        }
         
     } catch (e) {
         console.error(e);
@@ -68,6 +73,8 @@ router.post("/", async (req, res) => {
     try {
         const collection = "ArtWork";
         const object = req.body;
+
+        object.CreatedDate = new Date();
 
         await client.connect();
 
@@ -94,7 +101,7 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
     try {
         const collection = "ArtWork";
-        const id = parseInt(req.params.id);
+        const id = new ObjectId(req.params.id);
         const object = req.body;
 
         await client.connect();
@@ -105,7 +112,11 @@ router.put("/:id", async (req, res) => {
             .findOneAndUpdate({ _id: id }, { $set: object });
 
         await client.close();
-        res.status(200).send(result.value);
+        if(result) {
+          res.status(200).json(result);
+        } else {
+            res.status(404).send({ message: 'No document found with the given id.' });
+        }
         
     } catch (e) {
         console.error(e);
@@ -122,7 +133,7 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
     try {
         const collection = "ArtWork";
-        const id = parseInt(req.params.id);
+        const id = new ObjectId(req.params.id);
 
         await client.connect();
 
@@ -133,7 +144,11 @@ router.delete("/:id", async (req, res) => {
 
         await client.close();
 
-        res.status(200).send(result.value);
+        if(result) {
+          res.status(200).json(result);
+        } else {
+            res.status(404).send({ message: 'No document found with the given id.' });
+        }
         
     } catch (e) {
         console.error(e);
