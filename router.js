@@ -61,8 +61,6 @@ router.get("/:id", async (req, res) => {
       .collection(collection)
       .findOne({ _id: o_id });
 
-
-
     await client.close();
     if(result){
         res.status(200).json(sanitizeResult(result));
@@ -87,7 +85,6 @@ router.post("/", async (req, res) => {
     const object = req.body;
 
     object.CreateDate = new Date();
-
 
     await client.connect();
 
