@@ -7,7 +7,11 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+    origin: process.env.CORS_ORIGIN,
+}
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use('', router);
 
