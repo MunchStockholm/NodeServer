@@ -16,6 +16,8 @@ router.use(morgan('tiny'));
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
 
+let db; // test
+
 router.get("/", async (req, res) => {
   try {
 
@@ -81,19 +83,27 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    const collection = "ArtWork";
+    if (!db) {  // test
+      await client.connect();
+      db = client.db("GrafittiWallDB");
+    }
+
+    //const collection = "ArtWork";
+    const collection = db.collection("ArtWork");
     const object = req.body;
 
     object.CreatedDate = new Date();
 
-    await client.connect();
+    //await client.connect();
 
-    const result = await client
+    /*const result = await client
       .db("GrafittiWallDB")
       .collection(collection)
       .insertOne(object);
 
-    await client.close();
+    await client.close();*/
+
+    const result = await collection.insertOne(object);
 
     res.status(200).json(sanitizeResult(result));
   } catch (e) {
@@ -102,6 +112,8 @@ router.post("/", async (req, res) => {
       res.status(500).json({ message: "Database Connection Error", error: e.message });
     } else if (e instanceof MongoParseError) {
       res.status(400).json({ message: "Bad Request", error: e.message });
+    } else if (e.code === 11000) { // Duplicate key error
+      res.status(409).json({ message: "Conflict", error: e.message });
     } else {
       res.status(500).json({ message: "Internal Server Error", error: e.message });
     }
