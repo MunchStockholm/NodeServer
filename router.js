@@ -21,17 +21,19 @@ let db; // test
 router.get("/", async (req, res) => {
   try {
 
-    async function listObjects(client, dbName, collectionName) {
+    if (!db) {
       await client.connect();
-      const database = client.db(dbName);
-      const collection = database.collection(collectionName);
+      db = client.db("GrafittiWallDB");
+    }
+
+    const collection = db.collection("ArtWork");
+
+    async function listObjects() {
       const objects = await collection.find({}).toArray();
       return objects;
     }
 
-    const objects = await listObjects(client, "GrafittiWallDB", "ArtWork");
-
-    await client.close();
+    const objects = await listObjects();
 
     res.status(200).json(sanitizeResult(objects));
   } catch (e) {
@@ -48,7 +50,12 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
-    const collection = "ArtWork";
+    if (!db) {
+      await client.connect();
+      db = client.db("GrafittiWallDB");
+    }
+
+    const collection = db.collection("ArtWork");
     const id = req.params.id;
 
     if (!ObjectId.isValid(id)) {
@@ -56,14 +63,8 @@ router.get("/:id", async (req, res) => {
     }
     const o_id = new ObjectId(id);
 
-    await client.connect();
+    const result = await collection.findOne({ _id: o_id });
 
-    const result = await client
-      .db("GrafittiWallDB")
-      .collection(collection)
-      .findOne({ _id: o_id });
-
-    await client.close();
     if(result){
         res.status(200).json(sanitizeResult(result));
     }else{
@@ -83,24 +84,15 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    if (!db) {  // test
+    if (!db) {
       await client.connect();
       db = client.db("GrafittiWallDB");
     }
 
-    //const collection = "ArtWork";
     const collection = db.collection("ArtWork");
     const object = req.body;
 
     object.CreatedDate = new Date();
-
-    //await client.connect();
-    /*const result = await client
-      .db("GrafittiWallDB")
-      .collection(collection)
-      .insertOne(object);
-
-    await client.close();*/
 
     const result = await collection.insertOne(object);
 
@@ -121,7 +113,12 @@ router.post("/", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   try {
-    const collection = "ArtWork";
+    if (!db) {
+      await client.connect();
+      db = client.db("GrafittiWallDB");
+    }
+
+    const collection = db.collection("ArtWork");
     const id = req.params.id;
     const object = req.body;
 
@@ -130,14 +127,7 @@ router.put("/:id", async (req, res) => {
     }
     const o_id = new ObjectId(id);
 
-    await client.connect();
-
-    const result = await client
-      .db("GrafittiWallDB")
-      .collection(collection)
-      .findOneAndUpdate({ _id: o_id }, { $set: object });
-
-    await client.close();
+    const result = await collection.findOneAndUpdate({ _id: o_id }, { $set: object });
 
     if(result){
         res.status(200).json(sanitizeResult(result.value));
@@ -158,21 +148,20 @@ router.put("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   try {
-    const collection = "ArtWork";
+    if (!db) {
+      await client.connect();
+      db = client.db("GrafittiWallDB");
+    }
+
+    const collection = db.collection("ArtWork");
     const id = req.params.id;
-    await client.connect();
 
     if (!ObjectId.isValid(id)) {
         return res.status(400).json({message: "Invalid id format."});
     }
     const o_id = new ObjectId(id);
 
-    const result = await client
-      .db("GrafittiWallDB")
-      .collection(collection)
-      .findOneAndDelete({ _id: o_id });
-
-    await client.close();
+    const result = await collection.findOneAndDelete({ _id: o_id });
 
     if(result){
         res.status(200).json(sanitizeResult(result.value));
