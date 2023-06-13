@@ -16,7 +16,7 @@ router.use(morgan('tiny'));
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
 
-let db; // test
+let db;
 
 router.get("/", async (req, res) => {
   try {
@@ -29,7 +29,7 @@ router.get("/", async (req, res) => {
     const collection = db.collection("ArtWork");
 
     async function listObjects() {
-      const objects = await collection.find({}).toArray();
+      const objects = await collection.find({}).sort({ CreatedDate: -1 }).limit(100).toArray();
       return objects;
     }
 
