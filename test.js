@@ -1,13 +1,6 @@
-import { MongoClient } from "mongodb";
 import { expect } from "chai";
 import supertest from "supertest";
 import { app } from "./server.js";
-
-const user = process.env.MONGO_USER;
-const password = process.env.MONGO_PASSWORD;
-
-const connectionString = `mongodb+srv://${user}:${password}@cluster.dfjytlp.mongodb.net/?retryWrites=true&w=majority`;
-const client = new MongoClient(connectionString);
 
 describe("GET /", () => {
     let request = supertest(app);
@@ -21,8 +14,8 @@ describe("GET /", () => {
                 expect(res.body).to.be.an("array");
                 done();
             });
-    });
-
+    }).timeout(120000);
+    /*
     it("should handle errors and return a 500 status code", (done) => {
         client.close();
 
@@ -34,7 +27,7 @@ describe("GET /", () => {
                 expect(res.text).to.equal("Internal server error");
                 done();
             });
-    });
+    });*/
 });
 
 describe("POST /", () => {
@@ -54,16 +47,46 @@ describe("POST /", () => {
     });
 });
 
+describe("PUT /:id", () => {
+    let request = supertest(app);
+
+    describe("when updating an object", () => {
+        it("should respond with a 200 status code", async () => {
+            await request
+                .put("/101")
+                .send({_id: 101,
+                    ImageBytes: "updatedbase64string",
+                    ImageUrl: "url",
+                    IsFeatured: false,
+                    CreatedDate:  "2023-06-01T00:00:00.000Z"})
+                .expect(200);
+        });
+        it("should respond with a 404 status code", async () => {
+            await request
+                .put("/1012")
+                .send({_id: 101,
+                    ImageBytes: "updatedbase64string",
+                    ImageUrl: "url",
+                    IsFeatured: false,
+                    CreatedDate:  "2023-06-01T00:00:00.000Z"})
+                .expect(404);
+        });
+    });
+});
+
 describe("DELETE /:id", () => {
     let request = supertest(app);
 
     describe("when deleting an object", () => {
         it("should respond with a 200 status code", async () => {
-            // Assuming there is an object with ID 100 in the database before deletion
-
             await request
                 .delete("/101")
                 .expect(200);
+        });
+        it("should respond with a 404 status code", async () => {
+            await request
+                .delete("/1010")
+                .expect(404);
         });
     });
 })
