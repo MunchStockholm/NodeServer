@@ -180,6 +180,30 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+router.delete("/empty", async (req, res) => {
+  try {
+    if (!db) {
+      await client.connect();
+      db = client.db("GrafittiWallDB");
+    }
+
+    const collection = db.collection("ArtWork");
+
+    const result = await collection.deleteMany({});
+
+    res.status(200).json(sanitizeResult(result));
+  } catch (e) {
+    console.error(e);
+    if (e instanceof MongoClientError) {
+      res.status(500).json({ message: "Database Connection Error", error: e.message });
+    } else if (e instanceof MongoParseError) {
+      res.status(400).json({ message: "Bad Request", error: e.message });
+    } else {
+      res.status(500).json({ message: "Internal Server Error", error: e.message });
+    }
+  }
+});
+
 function sanitizeResult(result) {
   if (Array.isArray(result)) {
     return result.map(obj => {
