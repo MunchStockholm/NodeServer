@@ -180,7 +180,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-router.delete("/empty", async (req, res) => {
+router.delete("/", async (req, res) => {
   try {
     if (!db) {
       await client.connect();
